@@ -2,32 +2,21 @@ const express = require('express');
 const app = express();
 const getURL = require('./google.js');
 const DB = require('./db/dbConnect.js');
-const bodyParser = require('body-parser');
 const User = require('./db/user.js');
-const Task = require('./db/task.js');
 //API
 const api = require('./api/request.js');
-const a = require('./api/api.js');
+const a = require('./api/userApi.js');
 
 //
 //DB connection
-
 DB.fork(
 	(err) => {console.log(err)},
 	(res) => {console.log('connected')}
 );
 
-//Parsing POST request
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-app.use(bodyParser.json());
+const userApp = a(User);
 
-
-//api(User, usersApp);
-app.use('/users', a(User) );
-app.use('/tasks', a(Task) );
-
+app.use('/users', userApp );
 
 app.get('/', (req, res) => {
 console.log(req.method)
