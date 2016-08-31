@@ -3,6 +3,7 @@ const request = require('./request.js');
 const bodyParser = require('body-parser');
 const express = require('express');
 const R = require('ramda');
+const Task = require('data.task');
 
 function generateAPI(model){
 	const app = express();
@@ -24,34 +25,27 @@ function generateAPI(model){
 
 	app.get( '/', ( req, res ) => {
 		generateResponse( req.method, {}, (error) => { res.sendStatus(400); }, (data) => { res.send(data) } );
-	});
-	app.get( '/:name', ( req, res ) => {
+	})
+	.get( '/:name', ( req, res ) => {
 		generateResponse( req.method, { name : req.params.name }, (error) => {  res.sendStatus(400); }, (data) => { res.send(data) } );
-	});
-	app.put( '/:name', ( req, res ) => {
+	})
+	.put( '/:name', ( req, res ) => {
 		let query = { name : req.params.name }
 		generateResponse( req.method, req.body, (error) => { res.sendStatus(400); }, (data) => { res.send(data) } );
-	});
-	app.post( '/', ( req, res ) => {
+	})
+	.post( '/', ( req, res ) => {
 		//1st get to check if exists than create
-		let get = dbRequest( 'GET', req.body);
+		let get = dbRequest( 'GET', { name : req.body.name } );
 		let post = dbRequest( 'POST', req.body);
-
-		let getUser = (response) => { return response.map((elt) => {
-			if(elt.length !== 0){
-				return post
-			}
-		} )
-	 	};
-
-		getUser(get).fork(
-			(error) => { console.log('///'); res.send(error) },
-			(data) => { console.log('!!!'); res.sendStatus(200) } )
-
-		console.log(getUser(call));
-		/*generateResponse( req.method, req.body, (error) => { res.sendStatus(400); }, (data) => { res.send(data) } );*/
-	});
-	app.delete( '/', ( req, res ) => {
+		let getUser = get.chain( (a) => { 
+			//If no user found, perform the post request otherwise reject it
+			return ( a.length === 0 ? post : Task.rejected() );
+		} );
+		getUser.fork(
+			(error) => { res.send(error) },
+			(data) => { res.sendStatus(200) } )
+	})
+	.delete( '/', ( req, res ) => {
 		generateResponse( req.method, req.body, (error) => { res.sendStatus(400); }, (data) => { res.send(data) } );
 	});
 	return app;
