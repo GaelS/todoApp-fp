@@ -1,0 +1,20 @@
+{
+  "name": "trial-fp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "data.task": "^3.1.0",
+    "express": "^4.14.0",
+    "folktale": "^2.0.0-alpha1",
+    "monet": "^0.8.10",
+    "mongoose": "^4.5.10",
+    "ramda": "^0.22.1",
+    "request": "^2.74.0"
+  }
+}
