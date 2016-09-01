@@ -15,10 +15,11 @@ DB.fork(
 );
 const userApp = API(User, 'name');
 
+app.use(express.static(__dirname + '/src/client'));
 app.use('/users', userApp );
 
 app.get('/', (req, res) => {
-console.log(req.method)
+	res.sendFile('index.html')
 })
 .get('/fail', (req, res) => {
 	getURL.fork(

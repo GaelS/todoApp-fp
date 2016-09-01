@@ -54,5 +54,4 @@ function generateAPI(model, UrlParam){
 	});
 	return app;
 };
-
 module.exports = R.curry(generateAPI);
