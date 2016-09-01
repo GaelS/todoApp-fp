@@ -14,7 +14,7 @@ DB.fork(
 	(res) => {console.log('connected')}
 );
 
-const userApp = a(User);
+const userApp = a(User, 'name');
 
 app.use('/users', userApp );
 

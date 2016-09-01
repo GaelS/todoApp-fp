@@ -2,10 +2,13 @@
 const Task = require('data.task');
 const R = require('ramda');
 
-//model : either User or Task in our case
-//query : Object
-//@return : Task
-let request = R.curry( ( model, type, query ) => {
+/**
+* model : either User or Task in our case
+* query : Object
+* Optionnal : update : Object
+* @return : Task
+**/
+let request = R.curry( ( model, type, query, update ) => {
 	return new Task( ( reject, result ) => {
 		switch(type){
 			case 'GET' : {
