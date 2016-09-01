@@ -5,7 +5,7 @@ const DB = require('./db/dbConnect.js');
 const User = require('./db/user.js');
 //API
 const api = require('./api/request.js');
-const a = require('./api/userApi.js');
+const API = require('./api/routerAPI.js');
 
 //
 //DB connection
@@ -13,7 +13,7 @@ DB.fork(
 	(err) => {console.log(err)},
 	(res) => {console.log('connected'); }
 );
-const userApp = a(User, 'name');
+const userApp = API(User, 'name');
 
 app.use('/users', userApp );
 

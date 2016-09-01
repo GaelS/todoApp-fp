@@ -14,8 +14,8 @@ function generateAPI(model, UrlParam){
 	}));
 	app.use(bodyParser.json());
 
-	let generateTask = (dbRequest, method, query, error, success) => {
-		dbRequest( method, query, null ).fork(
+	let generateTask = (dbRequest, method, query, update, error, success) => {
+		dbRequest( method, query, update ).fork(
 			error,
 			success
 		)
@@ -28,18 +28,14 @@ function generateAPI(model, UrlParam){
 	let successCall = (data, res) => { console.log(data); res.send(data); };
 
 	app.get( '/', ( req, res ) => {
-		generateResponse( req.method, {}, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
+		generateResponse( req.method, {}, null, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
 	})
 	.get( `/:${UrlParam}`, ( req, res ) => {
-		generateResponse( req.method, { [UrlParam] : req.params[UrlParam] }, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
+		generateResponse( req.method, { [UrlParam] : req.params[UrlParam] }, null, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
 	})
 	.put( `/:${UrlParam}`, ( req, res ) => {
-		let query = { [UrlParam] : req.params[UrlParam] };
-		dbRequest( 'PUT', query, req.body ).fork(
-			(error) => errorCall( error,res ),
-			(data) => successCall( data, res )
-		);
-	} )
+		generateResponse( req.method, { [UrlParam] : req.params[UrlParam] }, req.body, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
+	})
 	.post( '/', ( req, res ) => {
 		//1st get to check if the element we want to post already exists
 		let get = dbRequest( 'GET', { [UrlParam] : req.body[UrlParam] }, null );
@@ -54,7 +50,7 @@ function generateAPI(model, UrlParam){
 		);
 	} )
 	.delete( '/', ( req, res ) => {
-		generateResponse( req.method, req.body, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
+		generateResponse( req.method, req.body, null, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
 	});
 	return app;
 };
