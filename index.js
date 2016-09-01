@@ -11,9 +11,8 @@ const a = require('./api/userApi.js');
 //DB connection
 DB.fork(
 	(err) => {console.log(err)},
-	(res) => {console.log('connected')}
+	(res) => {console.log('connected'); }
 );
-
 const userApp = a(User, 'name');
 
 app.use('/users', userApp );

@@ -26,10 +26,11 @@ let request = R.curry( ( model, type, query, update ) => {
 				break;
 			}
 			case 'PUT' : {
-				model.update(query, update, (err, res) => {
+				model.findOneAndUpdate(query, update, (err, res) => {
 					if( err ) reject(err)
 					else result(res)
-				})
+				});
+				break;
 			}
 			case 'DELETE' : {
 				model.remove(query, (err, res) => {

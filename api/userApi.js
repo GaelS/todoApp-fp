@@ -25,32 +25,19 @@ function generateAPI(model, UrlParam){
 
 	//For fork callbakcs
 	let errorCall = (error, res) => { res.sendStatus(400); };
-	let successCall = (data, res) => { res.send(data); };
-	app.use('*', (req,res,next) => {
-			console.log(req.params)
-			next();
-	});
+	let successCall = (data, res) => { console.log(data); res.send(data); };
 
 	app.get( '/', ( req, res ) => {
-		console.log('GET')
 		generateResponse( req.method, {}, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
 	})
 	.get( `/:${UrlParam}`, ( req, res ) => {
 		generateResponse( req.method, { [UrlParam] : req.params[UrlParam] }, (error) => errorCall( error,res ), (data) => successCall( data, res ) );
 	})
 	.put( `/:${UrlParam}`, ( req, res ) => {
-		console.log('PUT')
-		//1st get to check if exists than create
 		let query = { [UrlParam] : req.params[UrlParam] };
-		let get = dbRequest( 'GET', query, null );
-		let put = dbRequest( 'PUT', query, req.body);
-		let updateElt = get.chain( (elt) => {
-			//If no element found, perform the put request otherwise reject it
-			return (elt.length !== 0 ? put : Task.rejected());
-		} );
-		updateElt.fork(
+		dbRequest( 'PUT', query, req.body ).fork(
 			(error) => errorCall( error,res ),
-			(data) => { return successCall( data, res ) }
+			(data) => successCall( data, res )
 		);
 	} )
 	.post( '/', ( req, res ) => {
