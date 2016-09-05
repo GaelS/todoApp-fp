@@ -13,10 +13,9 @@ DB.fork(
 	(err) => {console.log(err)},
 	(res) => {console.log('connected'); }
 );
-const userApp = API(User, 'name');
 
 app.use(express.static(__dirname + '/src/client'));
-app.use('/users', userApp );
+app.use('/users', API(User, 'name') );
 
 app.get('/', (req, res) => {
 	res.sendFile('index.html')

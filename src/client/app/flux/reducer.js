@@ -4,7 +4,10 @@ const initialState = {
 
 export default ( state = initialState, action ) => {
 	return ({
-		'ADD_TODO' : Object.assign({}, state, {
+		'GET_USERS' : Object.assign({}, state, {
+			users : 
+		})
+		'POST_TODO' : Object.assign({}, state, {
 			todos : [
 				...state.todos,
 				{ 
