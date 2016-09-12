@@ -4,12 +4,7 @@
 
 export GETTING_USERS = 'GETTING_USERS'; 
 export const GET_USERS = 'GET_USERS';
-export function getUsers(){
-	return function(dispatch){
-		dispatch({ action : 'GETTING_USERS', type : null});
-		
-	}
-}
+
 export const ADD_USER = 'GET_USERS';
 export const DELETE_USER = 'GET_USERS';
 

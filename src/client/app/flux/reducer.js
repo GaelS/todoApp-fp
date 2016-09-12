@@ -1,12 +1,14 @@
 const initialState = {
 	todos : [],
+	users : [],
 }
 
-export default ( state = initialState, action ) => {
+export default (( state = initialState, action ) => {
 	return ({
 		'GET_USERS' : Object.assign({}, state, {
-			users : 
-		})
+			users : [],
+		}),
+
 		'POST_TODO' : Object.assign({}, state, {
 			todos : [
 				...state.todos,
@@ -17,4 +19,4 @@ export default ( state = initialState, action ) => {
 			],
 		} )
 	} )[action.type] || state;
-}
+});
