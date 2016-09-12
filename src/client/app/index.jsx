@@ -8,9 +8,11 @@ import App from './components/App.jsx'
 /*
 * INIT STORE
 */
+
 let store = createStore(reducer);
 render(
 	<Provider store={ store } >
-		<App />
+		<App  users={[]} onClick={(e) => console.log("ok")}/>
 	</Provider>,
-	document.getElementById('app'));
+	document.getElementById('app')
+);

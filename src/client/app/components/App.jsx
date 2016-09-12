@@ -2,6 +2,7 @@ import React from 'react';
 import * as actions from '../flux/actionsCreator.js';
 import { connect } from 'react-redux';
 
+
 const mapDispatchToProps = ( dispatch ) => {
   return {
     onClick: () => {
@@ -9,11 +10,13 @@ const mapDispatchToProps = ( dispatch ) => {
     }
   }
 };
+
 const mapStateToProps = ( state ) => {
 	return {
     	users: state.users,
   	};
  };
+
 const App = ( { users, onClick } ) => {
 	return (
 		<div> 
