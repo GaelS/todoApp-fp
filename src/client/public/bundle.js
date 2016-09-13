@@ -57,13 +57,17 @@
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 172);
 	
+	var _reduxThunk = __webpack_require__(/*! redux-thunk */ 195);
+	
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+	
 	var _redux = __webpack_require__(/*! redux */ 179);
 	
-	var _reducer = __webpack_require__(/*! ./flux/reducer.js */ 195);
+	var _reducer = __webpack_require__(/*! ./flux/reducer.js */ 196);
 	
 	var _reducer2 = _interopRequireDefault(_reducer);
 	
-	var _App = __webpack_require__(/*! ./components/App.jsx */ 196);
+	var _App = __webpack_require__(/*! ./components/App.jsx */ 197);
 	
 	var _App2 = _interopRequireDefault(_App);
 	
@@ -73,7 +77,7 @@
 	* INIT STORE
 	*/
 	
-	var store = (0, _redux.createStore)(_reducer2.default);
+	var store = (0, _redux.createStore)(_reducer2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 	(0, _reactDom.render)(_react2.default.createElement(
 		_reactRedux.Provider,
 		{ store: store },
@@ -23601,6 +23605,37 @@
 
 /***/ },
 /* 195 */
+/*!************************************!*\
+  !*** ./~/redux-thunk/lib/index.js ***!
+  \************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
+	
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+	
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+	
+	exports['default'] = thunk;
+
+/***/ },
+/* 196 */
 /*!****************************************!*\
   !*** ./src/client/app/flux/reducer.js ***!
   \****************************************/
@@ -23616,16 +23651,23 @@
 	
 	var initialState = {
 		todos: [],
-		users: []
+		users: [],
+		loadingUsers: false
 	};
 	
 	exports.default = function () {
 		var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 		var action = arguments[1];
 	
+		console.log(action);
 		return {
-			'GET_USERS': Object.assign({}, state, {
-				users: []
+			'RECEIVE_USERS': Object.assign({}, state, {
+				users: action.value,
+				loadingUsers: false
+			}),
+	
+			'GETTING_USERS': Object.assign({}, state, {
+				loadingUsers: true
 			}),
 	
 			'POST_TODO': Object.assign({}, state, {
@@ -23638,7 +23680,7 @@
 	};
 
 /***/ },
-/* 196 */
+/* 197 */
 /*!*******************************************!*\
   !*** ./src/client/app/components/App.jsx ***!
   \*******************************************/
@@ -23654,7 +23696,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _actionsCreator = __webpack_require__(/*! ../flux/actionsCreator.js */ 197);
+	var _actionsCreator = __webpack_require__(/*! ../flux/actionsCreator.js */ 198);
 	
 	var actions = _interopRequireWildcard(_actionsCreator);
 	
@@ -23674,12 +23716,14 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 		return {
-			users: state.users
+			users: state.users,
+			loadingUsers: state.loadingUsers
 		};
 	};
 	
 	var App = function App(_ref) {
 		var users = _ref.users;
+		var loadingUsers = _ref.loadingUsers;
 		var onClick = _ref.onClick;
 	
 		return _react2.default.createElement(
@@ -23689,14 +23733,19 @@
 				type: 'button',
 				onClick: onClick,
 				placeholder: 'les utilisateurs'
-			})
+			}),
+			loadingUsers && _react2.default.createElement(
+				'p',
+				null,
+				' Chargement '
+			)
 		);
 	};
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(App);
 
 /***/ },
-/* 197 */
+/* 198 */
 /*!***********************************************!*\
   !*** ./src/client/app/flux/actionsCreator.js ***!
   \***********************************************/
@@ -23709,32 +23758,35 @@
 	});
 	exports.getUsers = getUsers;
 	
-	var _request = __webpack_require__(/*! ../api/request.js */ 198);
+	var _request = __webpack_require__(/*! ../api/request.js */ 199);
 	
 	var _request2 = _interopRequireDefault(_request);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
 	function getUsers() {
-		console.log(_request2.default);
-		_request2.default.fork(_defineProperty({
-			function: function _function(err) {
-				console.log(err);
-			}
-		}, 'function', function _function(data) {
-			console.log(data);
-		}));
+		//launch call
 	
-		return {
-			action: 'GETTING_USERS',
-			type: null
+		return function (dispatch) {
+	
+			dispatch({
+				type: 'GETTING_USERS',
+				value: null
+			});
+	
+			return _request2.default.fork(function (err) {
+				console.log(err);
+			}, function (data) {
+				return dispatch({
+					type: 'RECEIVE_USERS',
+					value: data
+				});
+			});
 		};
 	}
 
 /***/ },
-/* 198 */
+/* 199 */
 /*!***************************************!*\
   !*** ./src/client/app/api/request.js ***!
   \***************************************/
@@ -23746,29 +23798,30 @@
 		value: true
 	});
 	
-	var _ramda = __webpack_require__(/*! ramda */ 199);
+	var _ramda = __webpack_require__(/*! ramda */ 200);
 	
 	var _ramda2 = _interopRequireDefault(_ramda);
 	
-	var _data = __webpack_require__(/*! data.task */ 200);
+	var _data = __webpack_require__(/*! data.task */ 201);
 	
 	var _data2 = _interopRequireDefault(_data);
 	
-	var _jquery = __webpack_require__(/*! jquery */ 203);
+	var _jquery = __webpack_require__(/*! jquery */ 204);
+	
+	var _jquery2 = _interopRequireDefault(_jquery);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var GET = function GET(uri) {
 		return new _data2.default(function (reject, result) {
-			(0, _jquery.getJSON)(uri, reject, result);
+			_jquery2.default.getJSON(uri).fail(reject).done(result);
 		});
 	};
-	var allUsers = GET('http://localhost:3000/users');
-	console.log(allUsers);
+	var allUsers = GET('http://localhost:5000/users');
 	exports.default = allUsers;
 
 /***/ },
-/* 199 */
+/* 200 */
 /*!*******************************!*\
   !*** ./~/ramda/dist/ramda.js ***!
   \*******************************/
@@ -32608,17 +32661,17 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /*!**********************************!*\
   !*** ./~/data.task/lib/index.js ***!
   \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(/*! ./task */ 201);
+	module.exports = __webpack_require__(/*! ./task */ 202);
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /*!*********************************!*\
   !*** ./~/data.task/lib/task.js ***!
   \*********************************/
@@ -32978,10 +33031,10 @@
 	  }, cleanup);
 	};
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/timers-browserify/main.js */ 202).setImmediate, __webpack_require__(/*! ./~/process/browser.js */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/timers-browserify/main.js */ 203).setImmediate, __webpack_require__(/*! ./~/process/browser.js */ 3)))
 
 /***/ },
-/* 202 */
+/* 203 */
 /*!*************************************!*\
   !*** ./~/timers-browserify/main.js ***!
   \*************************************/
@@ -33063,10 +33116,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/timers-browserify/main.js */ 202).setImmediate, __webpack_require__(/*! ./~/timers-browserify/main.js */ 202).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/timers-browserify/main.js */ 203).setImmediate, __webpack_require__(/*! ./~/timers-browserify/main.js */ 203).clearImmediate))
 
 /***/ },
-/* 203 */
+/* 204 */
 /*!*********************************!*\
   !*** ./~/jquery/dist/jquery.js ***!
   \*********************************/

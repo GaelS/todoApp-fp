@@ -14,10 +14,11 @@ const mapDispatchToProps = ( dispatch ) => {
 const mapStateToProps = ( state ) => {
 	return {
     	users: state.users,
+    	loadingUsers : state.loadingUsers,
   	};
  };
 
-const App = ( { users, onClick } ) => {
+const App = ( { users, loadingUsers, onClick } ) => {
 	return (
 		<div> 
 			<input 
@@ -25,6 +26,7 @@ const App = ( { users, onClick } ) => {
 				onClick={ onClick }
 				placeholder="les utilisateurs"
 			/>
+			{ loadingUsers && <p> Chargement </p> }
 		</div>
 	);
 }	

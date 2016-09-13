@@ -1,14 +1,22 @@
 import allUsers from '../api/request.js';
 
 export function getUsers(){
-	console.log(allUsers)
-	allUsers.fork( {
-		function(err){console.log(err)},
-		function(data){ console.log(data)},
-	} );
+	//launch call
 	
-	return { 
-		action : 'GETTING_USERS',
-		type : null
-	};
+	return (dispatch) => {
+		
+		dispatch({
+			type : 'GETTING_USERS',
+			value : null
+		});
+
+	return allUsers.fork( 
+		(err) => { console.log(err) },
+		(data) => { 
+			return dispatch( { 
+				type : 'RECEIVE_USERS',
+				value : data,
+			} );
+		} )
+	}
 }

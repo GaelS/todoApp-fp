@@ -3,7 +3,7 @@
 */
 
 export GETTING_USERS = 'GETTING_USERS'; 
-export const GET_USERS = 'GET_USERS';
+export const RECEIVE_USERS = 'RECEIVE_USERS';
 
 export const ADD_USER = 'GET_USERS';
 export const DELETE_USER = 'GET_USERS';

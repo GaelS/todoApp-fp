@@ -25,7 +25,7 @@ function generateAPI(model, UrlParam){
 
 	//For fork callbakcs
 	let errorCall = (error, res) => { res.sendStatus(400); };
-	let successCall = (data, res) => { console.log(data); res.send(data); };
+	let successCall = (data, res) => { res.setHeader('Content-Type', 'application/json'); res.send(data); };
 
 	app.get( '/', ( req, res ) => {
 		generateResponse( req.method, {}, null, (error) => errorCall( error,res ), (data) => successCall( data, res ) );

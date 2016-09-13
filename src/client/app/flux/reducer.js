@@ -1,13 +1,20 @@
 const initialState = {
 	todos : [],
 	users : [],
-}
+	loadingUsers : false,
+};
 
 export default (( state = initialState, action ) => {
+	console.log(action)
 	return ({
-		'GET_USERS' : Object.assign({}, state, {
-			users : [],
+		'RECEIVE_USERS' : Object.assign({}, state, {
+			users : action.value,
+			loadingUsers : false,
 		}),
+
+		'GETTING_USERS' : Object.assign({}, state, {
+			loadingUsers : true,
+		} ),
 
 		'POST_TODO' : Object.assign({}, state, {
 			todos : [
