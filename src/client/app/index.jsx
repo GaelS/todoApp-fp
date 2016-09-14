@@ -18,7 +18,7 @@ let store = createStore(
 );
 render(
 	<Provider store={ store } >
-		<App  users={[]} onClick={(e) => console.log("ok")}/>
+		<App />
 	</Provider>,
 	document.getElementById('app')
 );

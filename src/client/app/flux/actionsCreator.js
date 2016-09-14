@@ -2,7 +2,6 @@ import allUsers from '../api/request.js';
 
 export function getUsers(){
 	//launch call
-	
 	return (dispatch) => {
 		
 		dispatch({
@@ -19,4 +18,18 @@ export function getUsers(){
 			} );
 		} )
 	}
-}
+};
+
+export function changeTodoStatus(id){
+	return {
+		type : 'CHANGE_STATUS_TODO',
+		value : id,
+	};
+};
+
+export function createTodo(text){
+	return {
+		type : 'ADD_TODO',
+		value : text,
+	};
+};
